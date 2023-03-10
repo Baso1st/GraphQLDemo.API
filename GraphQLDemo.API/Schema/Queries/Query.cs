@@ -1,7 +1,6 @@
 ﻿using Bogus;
-using GraphQLDemo.API.Schema;
 
-namespace GraphQLDemo.API.schema
+namespace GraphQLDemo.API.Schema.Queries
 {
     public class Query
     {
@@ -12,7 +11,7 @@ namespace GraphQLDemo.API.schema
                 .RuleFor(c => c.Name, f => f.Name.FullName())
                 .RuleFor(c => c.Subject, f => f.PickRandom<Subject>());
 
-            var courses =  courseFaker.Generate(5);
+            var courses = courseFaker.Generate(5);
             return courses;
         }
 
