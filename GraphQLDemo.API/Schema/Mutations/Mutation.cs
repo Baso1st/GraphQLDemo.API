@@ -4,27 +4,48 @@ namespace GraphQLDemo.API.Schema.Mutations
 {
     public class Mutation
     {
-        private readonly List<CourseType> _courses;
+        private readonly List<CourseResult> _courses;
 
         public Mutation()
         {
-            _courses = new List<CourseType>();
+            _courses = new List<CourseResult>();
         }
 
-        public bool CreateCourse(string name, Subject subject, Guid instructorId)
+        public CourseResult? CreateCourse(CourseInputType courseInput)
         {
-            _courses.Add(new CourseType()
+            var course = new CourseResult()
             {
                 Id = Guid.NewGuid(),
-                Name = name,
-                Subject = subject,
-                Instructor = new InstructorType()
-                {
-                    Id = instructorId
-                }
-            });
+                Name = courseInput.Name,
+                Subject = courseInput.Subject,
+                InstructorId = courseInput.InstructorId
+            };
 
-            return true;
+            _courses.Add(course);
+
+            return course;
         }
+
+        public CourseResult? UpdateCourse(Guid id, CourseInputType courseInput)
+        {
+            var course = _courses.SingleOrDefault(c => c.Id == id);
+
+            if (course == null)
+            {
+                throw new GraphQLException(new Error("Course not found.", "COURSE_NOT_FOUND"));
+            }
+
+            course.Name = courseInput.Name;
+            course.Subject = courseInput.Subject;
+            course.InstructorId = courseInput.InstructorId;
+            
+            return course;
+        }
+
+        public bool DeleteCourse(Guid id)
+        {
+            return _courses.RemoveAll(c => c.Id == id) >= 1;
+        }
+
     }
 }
